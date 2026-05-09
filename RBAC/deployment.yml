@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbac-demo-deployment
+  namespace: rbac-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rbac-demo
+  template:
+    metadata:
+      labels:
+        app: rbac-demo
+    spec:
+      serviceAccountName: demo-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: kubectl-container
+        image: bitnami/kubectl:latest
+        command: ["/bin/sh"]
+        args: ["-c", "sleep 3600"]
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true

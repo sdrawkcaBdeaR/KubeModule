@@ -1,0 +1,1 @@
+flow for accessing azure resource from pod

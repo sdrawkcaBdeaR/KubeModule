@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo
+spec:
+  serviceAccountName: my-sa
+  containers:
+    - name: app
+      image: mcr.microsoft.com/azure-cli
+      command: ["/bin/sh", "-c"]
+      args:
+        - az keyvault secret show --vault-name my-akv-demo --name my-secret

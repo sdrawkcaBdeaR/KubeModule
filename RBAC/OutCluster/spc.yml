@@ -1,0 +1,25 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: busybox-spc
+  namespace: nitrogen
+spec:
+  provider: azure
+
+  parameters:
+    keyvaultName: nitroakv
+    tenantId: 4667418b-7015-4ceb-b207-2193896769a8
+    clientID: 751c9aef-09e2-41ce-a724-f22226e7fd7b   # Workload Identity
+
+    objects: |
+      array:
+        - |
+          objectName: nitin
+          objectType: secret
+
+  secretObjects:
+    - secretName: busybox-k8s-secret
+      type: Opaque
+      data:
+        - key: nitin
+          objectName: nitin

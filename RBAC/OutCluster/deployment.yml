@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-secrets-demo
+  namespace: nitrogen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox-secrets
+  template:
+    metadata:
+      labels:
+        app: busybox-secrets
+      annotations:
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: my-sa
+
+      securityContext:
+        fsGroup: 1001
+
+      containers:
+        - name: busybox
+          image: busybox:latest
+          command: ["sh", "-c", "echo 'Pod started'; ls /mnt/secrets; sleep 3600"]
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            allowPrivilegeEscalation: false
+
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets"
+              readOnly: true
+
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: busybox-spc

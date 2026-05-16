@@ -151,3 +151,54 @@ Federated Token (shared)
 
 ---
 
+## 🛠️ Practical
+
+1. Create a managed identity if one is not already present.
+   - This is the Azure identity that the pod will use for Key Vault or other Azure resources.
+   - In Azure CLI:
+     ```bash
+     az identity create --name myAppIdentity --resource-group myResourceGroup
+     ```
+     ![alt text](micreate.png)
+
+2. Create or verify the OIDC issuer URL for the cluster.
+   - This is required for federated credential setup.
+   - In AKS, the OIDC issuer URL is usually available from the cluster metadata or:
+     ```bash
+     az aks show --resource-group myResourceGroup --name myCluster --query oidcIssuerProfile.issuerUrl -o tsv
+     ```
+
+3. Create a federated credential between the managed identity and the cluster ServiceAccount identity.
+   - The federated credential links the Azure managed identity with the Kubernetes workload identity.
+   - You need the OIDC issuer URL, the tenant ID, and the workload identity subject.
+   - Example using Azure CLI:
+     ```bash
+     az identity federated-credential create \
+       --name myFederatedCred \
+       --identity-name myAppIdentity \
+       --resource-group myResourceGroup \
+       --issuer "https://<oidc-issuer-url>" \
+       --subject "system:serviceaccount:<namespace>:<serviceaccount-name>" \
+       --audiences api://AzureADTokenExchange
+     ```
+     ![alt text](fedcreate.png)
+
+4. Confirm the credential is attached to the managed identity.
+   - This ensures Azure AD can exchange the Kubernetes federated token for an Azure access token.
+   - Use:
+     ```bash
+     az identity federated-credential list --identity-name myAppIdentity --resource-group myResourceGroup
+     ```
+
+5. Use the managed identity `clientID` and `tenantId` in your `SecretProviderClass`.
+   - This lets the CSI provider authenticate to Azure Key Vault using the federated identity.
+   - Example SPC fields:
+     ```yaml
+     clientID: "<managed-identity-client-id>"
+     tenantId: "<tenant-id>"
+     ```
+
+> Practical note: if you do not have a managed identity yet, create it first; if you already have one, simply add the federated credential using the cluster OIDC issuer and the workload identity subject.
+
+---
+

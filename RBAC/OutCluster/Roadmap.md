@@ -181,6 +181,8 @@ Federated Token (shared)
        --subject "system:serviceaccount:<namespace>:<serviceaccount-name>" \
        --audiences api://AzureADTokenExchange
      ```
+     ![alt text](image.png)
+
      ![alt text](fedcreate.png)
 
 4. Confirm the credential is attached to the managed identity.

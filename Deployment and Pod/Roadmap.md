@@ -27,6 +27,7 @@ Each layer has a specific responsibility, providing scalability, reliability, an
 ## ✅ 4. Rollback Support
 - Deployment stores revision history
 - You can roll back to a previous ReplicaSet if needed
+- If a specific ReplicaSet is deleted manually or removed by `revisionHistoryLimit`, rollback to that revision is no longer possible because Kubernetes no longer has the snapshot needed to restore it
 
 ---
 

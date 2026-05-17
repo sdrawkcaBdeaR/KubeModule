@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-pod
+  namespace: nitrogen
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+  containers:
+  - name: busybox
+    image: busybox:latest
+    command: ["sleep", "infinity"]
+    volumeMounts:
+    - name: my-storage
+      mountPath: /data   # path inside container
+  volumes:
+  - name: my-storage
+    persistentVolumeClaim:
+      claimName: my-pvc  # PVC name
+  restartPolicy: Always

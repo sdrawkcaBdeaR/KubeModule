@@ -149,3 +149,15 @@ spec:
 - Use Jobs for batch tasks
 - Use CronJobs for scheduling
 - Control retries and history cleanup
+
+---
+
+# 🧪 Practical Verification
+
+- Use `kubectl logs <job-pod-name>` to check the Job execution output:
+  - `kubectl logs $(kubectl get pods --selector=job-name=<job-name> -o jsonpath='{.items[0].metadata.name}')`
+- Use `kubectl get jobs` to confirm the Job was created:
+  - `kubectl get jobs -o wide`
+- Use `kubectl get cronjob` and `kubectl get jobs --watch` to verify the CronJob creates Jobs on schedule:
+  - `kubectl get cronjob <cronjob-name>`
+  - `kubectl get jobs --watch`

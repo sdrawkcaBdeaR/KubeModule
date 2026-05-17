@@ -18,6 +18,7 @@ In Kubernetes, Persistent Volumes (PV) and Persistent Volume Claims (PVC) are us
 ## ✅ PersistentVolumeClaim (PVC)
 - A request for storage by a user/application
 - Binds to a matching PV based on size and access mode
+- StorageClass and dynamic provisioning: A `StorageClass` defines how storage should be provisioned (for example, disk type and the provisioner to use). It does not create storage by itself; when you create a `PersistentVolumeClaim` (or rely on the default `StorageClass`), Kubernetes invokes the associated provisioner (typically a CSI driver) to dynamically create a `PersistentVolume` and bind it to the `PVC`. The resulting `PV` is then available to any `Pod` that uses that `PVC`, so you don't need to create `PV` objects manually for dynamically provisioned volumes.
 
 ---
 
